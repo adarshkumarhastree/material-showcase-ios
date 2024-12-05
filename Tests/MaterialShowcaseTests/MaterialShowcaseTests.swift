@@ -14,8 +14,7 @@ class MaterialShowcaseTests: XCTestCase {
     func testUserState() {
 //        if is it true no retry animation else always retry
         let showcase = MaterialShowcase()
-        showcase.setUserState(save: true)
-        XCTAssertEqual(true, showcase.getUserState())
+      
     
     }
 

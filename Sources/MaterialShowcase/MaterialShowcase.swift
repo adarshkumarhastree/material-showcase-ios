@@ -13,130 +13,110 @@ import UIKit
 }
 
 open class MaterialShowcase: UIView {
-  
-  @objc public enum BackgroundTypeStyle: Int {
-    case circle //default
-    case full//full screen
-  }
-
-  @objc public enum SkipButtonStyle: Int {
-    case image
-    case text
-  }
-
-  @objc public enum SkipButtonPosition: Int {
-    case topRight
-    case topLeft
-    case bottomLeft
-    case bottomRight
-    case belowInstruction
-  }
-  
-  // MARK: Material design guideline constant
-  let BACKGROUND_PROMPT_ALPHA: CGFloat = 0.96
-  let TARGET_HOLDER_RADIUS: CGFloat = 44
-  let TEXT_CENTER_OFFSET: CGFloat = 44 + 20
-  let INSTRUCTIONS_CENTER_OFFSET: CGFloat = 20
-  let LABEL_MARGIN: CGFloat = 40
-  let TARGET_PADDING: CGFloat = 20
-  let SKIP_BUTTON_MARGIN: CGFloat = 16
-  let SKIP_BUTTON_CONTENT_INSET: CGFloat = 8
-  let SKIP_BUTTON_BORDER_WIDTH: CGFloat = 1
-  let SKIP_BUTTON_CORNER_RADIUS: CGFloat = 4
-
-  // Other default properties
-  let LABEL_DEFAULT_HEIGHT: CGFloat = 50
-  let BACKGROUND_DEFAULT_COLOR = UIColor.fromHex(hexString: "#2196F3")
-  let TARGET_HOLDER_COLOR = UIColor.white
-  
-  // MARK: Animation properties
-  var ANI_COMEIN_DURATION: TimeInterval = 0.5 // second
-  var ANI_GOOUT_DURATION: TimeInterval = 0.5  // second
-  var ANI_TARGET_HOLDER_SCALE: CGFloat = 2.2
-  let ANI_RIPPLE_COLOR = UIColor.white
-  let ANI_RIPPLE_ALPHA: CGFloat = 0.5
-  let ANI_RIPPLE_SCALE: CGFloat = 1.6
-  
-  var offsetThreshold: CGFloat = 88
-  
-  // MARK: Private view properties
-  var closeButton : UIButton!
-  
-  var containerView: UIView!
-  var targetView: UIView!
-  var backgroundView: UIView!
-  var targetHolderView: UIView!
-  var hiddenTargetHolderView: UIView!
-  var targetRippleView: UIView!
-  var targetCopyView: UIView!
-  var instructionView: MaterialShowcaseInstructionView!
-  
-  public var skipButton: (() -> Void)?
-  var onTapThrough: (() -> Void)?
-  
-  // MARK: Public Properties
-  // Skip Button
-  private var skipButtonType: SkipButtonStyle = .image
-  public var skipButtonPosition: SkipButtonPosition = .topRight
-  public var skipButtonImage = "HintClose" {
-    didSet {
-      skipButtonType = .image
-    }
-  }
-  public var skipButtonTitle = "" {
-    didSet {
-      skipButtonType = .text
-    }
-  }
-
-  // Background
-  @objc public var backgroundAlpha: CGFloat = 1.0
-  @objc public var backgroundPromptColor: UIColor!
-  @objc public var backgroundPromptColorAlpha: CGFloat = 0.0
-  @objc public var backgroundViewType: BackgroundTypeStyle = .circle
-  @objc public var backgroundRadius: CGFloat = -1.0 // If the value is negative, calculate the radius automatically
-  // Tap zone settings
-  // - false: recognize tap from all displayed showcase.
-  // - true: recognize tap for targetView area only.
-  @objc public var isTapRecognizerForTargetView: Bool = false
-  // Target
-  @objc public var shouldSetTintColor: Bool = true
-  @objc public var targetTintColor: UIColor!
-  @objc public var targetHolderRadius: CGFloat = 0.0
-  @objc public var targetHolderColor: UIColor!
-  // Text
-  @objc public var primaryText: String!
-  @objc public var secondaryText: String!
-  @objc public var primaryTextColor: UIColor!
-  @objc public var secondaryTextColor: UIColor!
-  @objc public var primaryTextSize: CGFloat = 0.0
-  @objc public var secondaryTextSize: CGFloat = 0.0
-  @objc public var primaryTextFont: UIFont?
-  @objc public var secondaryTextFont: UIFont?
-  @objc public var primaryTextAlignment: NSTextAlignment = .left
-  @objc public var secondaryTextAlignment: NSTextAlignment = .left
-  // Animation
-  @objc public var aniComeInDuration: TimeInterval = 0.0
-  @objc public var aniGoOutDuration: TimeInterval = 0.0
-  @objc public var aniRippleScale: CGFloat = 0.0
-  @objc public var aniRippleColor: UIColor!
-  @objc public var aniRippleAlpha: CGFloat = 0.0
-  // Delegate
-  @objc public weak var delegate: MaterialShowcaseDelegate?
-  
-  public init() {
-    // Create frame
-    let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-    super.init(frame: frame)
     
-    configure()
-  }
+    @objc public enum BackgroundTypeStyle: Int {
+      case circle //default
+      case full//full screen
+    }
+
+
+   
+    
+    // MARK: Material design guideline constant
+    let BACKGROUND_PROMPT_ALPHA: CGFloat = 0.96
+    let TARGET_HOLDER_RADIUS: CGFloat = 44
+    let TEXT_CENTER_OFFSET: CGFloat = 44 + 20
+    let INSTRUCTIONS_CENTER_OFFSET: CGFloat = 20
+    let LABEL_MARGIN: CGFloat = 40
+    let TARGET_PADDING: CGFloat = 20
+    let SKIP_BUTTON_MARGIN: CGFloat = 16
+    let SKIP_BUTTON_CONTENT_INSET: CGFloat = 8
+    let SKIP_BUTTON_BORDER_WIDTH: CGFloat = 1
+    let SKIP_BUTTON_CORNER_RADIUS: CGFloat = 4
+
+    // Other default properties
+    let LABEL_DEFAULT_HEIGHT: CGFloat = 50
+    let BACKGROUND_DEFAULT_COLOR = UIColor.fromHex(hexString: "#2196F3")
+    let TARGET_HOLDER_COLOR = UIColor.white
+    
+    // MARK: Animation properties
+    var ANI_COMEIN_DURATION: TimeInterval = 0.1 // second
+    var ANI_GOOUT_DURATION: TimeInterval = 0.1  // second
+    var ANI_TARGET_HOLDER_SCALE: CGFloat = 2.2
+    let ANI_RIPPLE_COLOR = UIColor.white
+    let ANI_RIPPLE_ALPHA: CGFloat = 0.5
+    let ANI_RIPPLE_SCALE: CGFloat = 1.6
+    
+    var offsetThreshold: CGFloat = 88
+    
+    // MARK: Private view properties
+    var closeButton : UIButton!
+    
+    var containerView: UIView!
+    var targetView: UIView!
+    var backgroundView: UIView!
+    var targetHolderView: UIView!
+    var hiddenTargetHolderView: UIView!
+    var targetRippleView: UIView!
+    var targetCopyView: UIView!
+   public var instructionView: MaterialShowcaseInstructionView!
+    public var skipButton: (() -> Void)?
+    var onTapThrough: (() -> Void)?
+    private var originalInstructionView: MaterialShowcaseInstructionView?
+
+    // MARK: Public Properties
+    // Skip Button
   
-  // No supported initilization method
-  required public init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+
+    // Background
+    @objc public var backgroundAlpha: CGFloat = 1.0
+    @objc public var backgroundPromptColor: UIColor!
+    @objc public var backgroundPromptColorAlpha: CGFloat = 0.0
+    @objc public var backgroundViewType: BackgroundTypeStyle = .full
+      
+    @objc public var backgroundRadius: CGFloat = -1.0 // If the value is negative, calculate the radius automatically
+    // Tap zone settings
+    // - false: recognize tap from all displayed showcase.
+    // - true: recognize tap for targetView area only.
+    @objc public var isTapRecognizerForTargetView: Bool = false
+    // Target
+    @objc public var shouldSetTintColor: Bool = true
+    @objc public var targetTintColor: UIColor!
+    @objc public var targetHolderRadius: CGFloat = 0.0
+    @objc public var targetHolderColor: UIColor!
+    // Text
+    @objc public var primaryText: String!
+    @objc public var secondaryText: String!
+    @objc public var primaryTextColor: UIColor!
+    @objc public var secondaryTextColor: UIColor!
+    @objc public var primaryTextSize: CGFloat = 0.0
+    @objc public var secondaryTextSize: CGFloat = 0.0
+    @objc public var primaryTextFont: UIFont?
+    @objc public var secondaryTextFont: UIFont?
+    @objc public var primaryTextAlignment: NSTextAlignment = .left
+    @objc public var secondaryTextAlignment: NSTextAlignment = .left
+    // Animation
+    @objc public var aniComeInDuration: TimeInterval = 0.0
+    @objc public var aniGoOutDuration: TimeInterval = 0.0
+    @objc public var aniRippleScale: CGFloat = 0.0
+    @objc public var aniRippleColor: UIColor!
+    @objc public var aniRippleAlpha: CGFloat = 0.0
+    // Delegate
+    @objc public weak var delegate: MaterialShowcaseDelegate?
+    
+    public init() {
+      // Create frame
+      let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+      super.init(frame: frame)
+      
+      configure()
+    }
+    
+    // No supported initilization method
+    required public init?(coder aDecoder: NSCoder) {
+      fatalError("init(coder:) has not been implemented")
+    }
   }
-}
 
 // MARK: - Public APIs
 extension MaterialShowcase {
@@ -216,86 +196,72 @@ extension MaterialShowcase {
   }
   
   /// Shows it over current screen after completing setup process
-  @objc public func show(animated: Bool = true,hasShadow: Bool = true, hasSkipButton: Bool = false, completion handler: (()-> Void)?) {
-    initViews()
-    alpha = 0.0
-    containerView.addSubview(self)
-    layoutIfNeeded()
-    
-    let scale = TARGET_HOLDER_RADIUS / (backgroundView.frame.width / 2)
-    let center = backgroundView.center
-    
-    backgroundView.transform = CGAffineTransform(scaleX: scale, y: scale) // Initial set to support animation
-    backgroundView.center = targetHolderView.center
-    
-    if hasSkipButton {
-      
-      closeButton = UIButton()
-
-      if skipButtonType == .text, !skipButtonTitle.isEmpty {
-        closeButton.setTitle(skipButtonTitle, for: .normal)
-        closeButton.setBorderColor(primaryTextColor, width: SKIP_BUTTON_BORDER_WIDTH)
-        closeButton.setCornerRadius(SKIP_BUTTON_CORNER_RADIUS)
-        closeButton.contentEdgeInsets = UIEdgeInsets(top: SKIP_BUTTON_CONTENT_INSET, left: SKIP_BUTTON_CONTENT_INSET, bottom: SKIP_BUTTON_CONTENT_INSET, right: SKIP_BUTTON_CONTENT_INSET)
-
-      } else {
-        closeButton.setImage(UIImage(named: skipButtonImage), for: .normal)
-      }
-      
-      addSubview(closeButton)
-      closeButton.addTarget(self, action: #selector(dismissTutorialButtonDidTouch), for: .touchUpInside)
-      
-      if #available(iOS 9.0, *) {
-        let margins = layoutMarginsGuide
-        closeButton.translatesAutoresizingMaskIntoConstraints = false
-
-        switch skipButtonPosition {
-        case .topRight:
-          setupCloseButtonForEdges()
-          closeButton.topAnchor.constraint(equalTo: margins.topAnchor, constant: 0).isActive = true
-          closeButton.rightAnchor.constraint(equalTo: margins.rightAnchor, constant: -8).isActive = true
-        case .topLeft:
-          setupCloseButtonForEdges()
-          closeButton.topAnchor.constraint(equalTo: margins.topAnchor, constant: 0).isActive = true
-          closeButton.leftAnchor.constraint(equalTo: margins.leftAnchor, constant: 8).isActive = true
-        case .bottomLeft:
-          closeButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
-          closeButton.leftAnchor.constraint(equalTo: margins.leftAnchor, constant: 8).isActive = true
-        case .bottomRight:
-          closeButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
-          closeButton.rightAnchor.constraint(equalTo: margins.rightAnchor, constant: -8).isActive = true
-        case .belowInstruction:
-          closeButton.topAnchor.constraint(equalTo: instructionView.bottomAnchor, constant: SKIP_BUTTON_MARGIN).isActive = true
-          closeButton.leftAnchor.constraint(equalTo: instructionView.leftAnchor, constant: SKIP_BUTTON_MARGIN).isActive = true
+    @objc public func show(animated: Bool = false, hasShadow: Bool = true, hasSkipButton: Bool = false, completion handler: (() -> Void)?) {
+        initViews()
+        alpha = backgroundAlpha
+        containerView.addSubview(self)
+        layoutIfNeeded()
+        
+        let center = backgroundView.center
+        
+        if hasSkipButton {
+            closeButton = UIButton()
+            addSubview(closeButton)
+            closeButton.addTarget(self, action: #selector(dismissTutorialButtonDidTouch), for: .touchUpInside)
+            if #available(iOS 9.0, *) {
+                closeButton.translatesAutoresizingMaskIntoConstraints = false
+            }
         }
-      } else {
-        // Fallback on earlier versions
-      }
+        
+        if hasShadow {
+            backgroundView.layer.shadowColor = UIColor.black.cgColor
+            backgroundView.layer.shadowRadius = 5.0
+            backgroundView.layer.shadowOpacity = 0.5
+            backgroundView.layer.shadowOffset = .zero
+            backgroundView.clipsToBounds = false
+        }
+        
+        if animated {
+            UIView.animate(withDuration: aniComeInDuration, animations: {
+                self.alpha = self.backgroundAlpha
+            }, completion: { _ in
+                self.startAnimations()
+            })
+        } else {
+            self.alpha = self.backgroundAlpha
+        }
+        
+        // Handler user's action after showing
+        handler?()
     }
-    
-    if hasShadow {
-      backgroundView.layer.shadowColor = UIColor.black.cgColor
-      backgroundView.layer.shadowRadius = 5.0
-      backgroundView.layer.shadowOpacity = 0.5
-      backgroundView.layer.shadowOffset = .zero
-      backgroundView.clipsToBounds = false
+
+    @objc public func completeShowcase(animated: Bool = false, didTapTarget: Bool = false, completion: (() -> Void)? = nil) {
+        if delegate != nil && delegate?.showCaseWillDismiss != nil {
+            delegate?.showCaseWillDismiss?(showcase: self, didTapTarget: didTapTarget)
+        }
+        
+        if animated {
+            UIView.animate(withDuration: aniGoOutDuration, animations: {
+                self.alpha = 0
+            }, completion: { _ in
+                self.recycleSubviews()
+                self.removeFromSuperview()
+                completion?()
+            })
+        } else {
+            self.alpha = 0
+            recycleSubviews()
+            removeFromSuperview()
+            completion?()
+        }
+        
+        if delegate != nil && delegate?.showCaseDidDismiss != nil {
+            delegate?.showCaseDidDismiss?(showcase: self, didTapTarget: didTapTarget)
+        }
+        if didTapTarget {
+            onTapThrough?()
+        }
     }
-    
-    if animated {
-      UIView.animate(withDuration: aniComeInDuration, animations: {
-        self.targetHolderView.transform = CGAffineTransform(scaleX: 1, y: 1)
-        self.backgroundView.transform = CGAffineTransform(scaleX: 1, y: 1)
-        self.backgroundView.center = center
-        self.alpha = self.backgroundAlpha
-      }, completion: { _ in
-        self.startAnimations()
-      })
-    } else {
-      alpha = backgroundAlpha
-    }
-    // Handler user's action after showing.
-    handler?()
-  }
   
 }
 
@@ -367,94 +333,101 @@ extension MaterialShowcase {
     }, completion: nil)
   }
   
-  func initViews() {
-    let center = calculateCenter(at: targetView, to: containerView)
-    
-    addTargetRipple(at: center)
-    addTargetHolder(at: center)
-    
-    // if color is not UIColor.clear, then add the target snapshot
-    if targetHolderColor != .clear {
-      addTarget(at: center)
+   public func initViews() {
+       
+       func initViews() {
+           if originalInstructionView == nil {
+               originalInstructionView = MaterialShowcaseInstructionView()
+           }
+           instructionView = originalInstructionView
+       }
+           
+       
+        
+        let center = calculateCenter(at: targetView, to: containerView)
+        addTargetRipple(at: center)
+        addTargetHolder(at: center)
+        if targetHolderColor != .clear {
+            addTarget(at: center)
+        }
+        addBackground()
+        addInstructionView(at: center)
+        instructionView.layoutIfNeeded()
+        
+        subviews.forEach { $0.isUserInteractionEnabled = true }
     }
-    
-    addBackground()
-    
-    addInstructionView(at: center)
-    instructionView.layoutIfNeeded()
-    
-    // Disable subview interaction to let users click to general view only
-    subviews.forEach({$0.isUserInteractionEnabled = false})
-    
-    if isTapRecognizerForTargetView {
-      //Add gesture recognizer for targetCopyView
-      hiddenTargetHolderView.addGestureRecognizer(tapGestureRecoganizer())
-      hiddenTargetHolderView.isUserInteractionEnabled = true
-    } else {
-      // Add gesture recognizer for both container and its subview
-      addGestureRecognizer(tapGestureRecoganizer())
-      hiddenTargetHolderView.addGestureRecognizer(tapGestureRecoganizer())
-      hiddenTargetHolderView.isUserInteractionEnabled = true
-    }
-  }
   
   /// Add background which is a big circle
-  private func addBackground() {
-    switch self.backgroundViewType {
-    case .circle:
-      let radius: CGFloat
+    private func addBackground() {
+        switch self.backgroundViewType {
+        case .circle:
+            let radius: CGFloat
+            
+            if backgroundRadius < 0 {
+                radius = getDefaultBackgroundRadius()
+            } else {
+                radius = backgroundRadius
+            }
+            
+            let center = targetRippleView.center
+            backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2,height: radius * 2))
+            backgroundView.center = center
+            backgroundView.asCircle()
+            
+            
+            
+        case .full:
+            backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height))
+        }
+        
+        
+        backgroundView.backgroundColor = backgroundPromptColor.withAlphaComponent(backgroundPromptColorAlpha)
+
+        insertSubview(backgroundView, belowSubview: targetRippleView)
+        
+        var highlightFrame = targetView.superview?.convert(targetView.frame, to: backgroundView) ?? targetView.frame
       
-      if backgroundRadius < 0 {
-        radius = getDefaultBackgroundRadius()
-      } else {
-        radius = backgroundRadius
-      }
-      
-      let center = targetRippleView.center
-      backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: radius * 2,height: radius * 2))
-      backgroundView.center = center
-      backgroundView.asCircle()
-      
-      
-      
-    case .full:
-      backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width,height: UIScreen.main.bounds.height))
+        addBackgroundMask(with: highlightFrame, in: backgroundView)
     }
-    
-    
-    backgroundView.backgroundColor = backgroundPromptColor.withAlphaComponent(backgroundPromptColorAlpha)
-    insertSubview(backgroundView, belowSubview: targetRippleView)
-    
-    addBackgroundMask(with: targetHolderRadius, in: backgroundView)
-  }
   
   private func getDefaultBackgroundRadius() -> CGFloat {
     var radius: CGFloat = 0.0
     if UIDevice.current.userInterfaceIdiom == .pad {
       radius = 300.0
     } else {
-      radius = 400.0
+        radius = 500.0
     }
     return radius
   }
-  
-  private func addBackgroundMask(with radius: CGFloat, in view: UIView) {
-    let center = backgroundViewType == .circle ? view.bounds.center : targetRippleView.center
-    
-    let mutablePath = CGMutablePath()
-    mutablePath.addRect(view.bounds)
-    mutablePath.addArc(center: center, radius: radius, startAngle: 0.0, endAngle: 2 * .pi, clockwise: false)
-    
-    let mask = CAShapeLayer()
-    mask.path = mutablePath
-    mask.fillRule = CAShapeLayerFillRule.evenOdd
-    
-    view.layer.mask = mask
-  }
+    private func addBackgroundMask(with highlightFrame: CGRect, in view: UIView, margin: CGFloat = 10.0, cornerRadius: CGFloat = 10.0) {
+        let mutablePath = CGMutablePath()
+        
+        // Add the full rectangle of the view
+        mutablePath.addRect(view.bounds)
+        
+        // Expand the highlight frame by the margin symmetrically and add a rounded rectangle
+        let expandedFrame = highlightFrame.insetBy(dx: -margin + 5, dy: -margin + 5)
+        
+        let roundedRectPath = UIBezierPath(roundedRect: expandedFrame, cornerRadius: cornerRadius).cgPath
+        
+        // Subtract the rounded rectangle path from the main path
+        mutablePath.addPath(roundedRectPath)
+        
+        // Create a mask layer
+        let mask = CAShapeLayer()
+        mask.path = mutablePath
+        mask.fillRule = .evenOdd // Ensures the cut-out behaves correctly (transparent)
+        
+        // Apply the mask to the view's layer
+        view.layer.mask = mask
+        view.clipsToBounds = true
+        
+
+    }
   
   /// A background view which add ripple animation when showing target view
   private func addTargetRipple(at center: CGPoint) {
-    targetRippleView = UIView(frame: CGRect(x: 0, y: 0, width: targetHolderRadius * 2,height: targetHolderRadius * 2))
+      targetRippleView = UIView(frame: CGRect(x: 0, y: 0, width: targetView.bounds.width ,height: targetHolderRadius ))
     targetRippleView.center = center
     targetRippleView.backgroundColor = aniRippleColor
     targetRippleView.alpha = 0.0 //set it invisible
@@ -466,7 +439,7 @@ extension MaterialShowcase {
   private func addTargetHolder(at center: CGPoint) {
     hiddenTargetHolderView = UIView()
     hiddenTargetHolderView.backgroundColor = .clear
-    targetHolderView = UIView(frame: CGRect(x: 0, y: 0, width: targetHolderRadius * 2,height: targetHolderRadius * 2))
+      targetHolderView = UIView(frame: CGRect(x: 0, y: 0, width: targetView.bounds.width,height: targetHolderRadius ))
     targetHolderView.center = center
     targetHolderView.backgroundColor = targetHolderColor
     targetHolderView.asCircle()
@@ -515,8 +488,16 @@ extension MaterialShowcase {
   
   /// Configures and adds primary label view
   private func addInstructionView(at center: CGPoint) {
-    instructionView = MaterialShowcaseInstructionView()
-    
+      if instructionView == nil {
+              instructionView = MaterialShowcaseInstructionView()
+              print("InstructionView created: \(ObjectIdentifier(instructionView))")
+          } else {
+              print("Reusing existing InstructionView: \(ObjectIdentifier(instructionView))")
+          }
+      let backgroundContainerView = UIView()
+          backgroundContainerView.backgroundColor = .white
+          backgroundContainerView.layer.cornerRadius = 12 // Same corner radius for rounded effect
+          backgroundContainerView.clipsToBounds = true
     instructionView.primaryTextAlignment = primaryTextAlignment
     instructionView.primaryTextFont = primaryTextFont
     instructionView.primaryTextSize = primaryTextSize
@@ -578,17 +559,22 @@ extension MaterialShowcase {
         width = width - abs(backgroundView.frame.origin.x)
       } else if (backgroundView.frame.center.x + targetHolderRadius >
         UIScreen.main.bounds.width) {
-        width = width - abs(backgroundView.frame.origin.x)
+          width = width - abs(backgroundView.frame.origin.x) + 10.0
         xPosition = xPosition + abs(backgroundView.frame.origin.x)
       }
       
       //Updates horizontal parameters
-      instructionView.frame = CGRect(x: xPosition,
+        instructionView.frame = CGRect(x: xPosition ,
                                      y: instructionView.frame.origin.y,
                                      width: width ,
                                      height: 0)
+        instructionView.backgroundColor = UIColor.fromHex(hexString: "#F6F7FE")
       instructionView.layoutIfNeeded()
-      
+        instructionView.nextButtonAction = { [weak self] in
+             guard let self = self else { return }
+             self.completeShowcase(animated: false) // Safely dismiss the current showcase
+         }
+
       if getTargetPosition(target: targetView, container: containerView) == .above {
         yPosition = center.y + TARGET_PADDING +  (targetView.bounds.height / 2 > targetHolderRadius ? targetView.bounds.height / 2 : targetHolderRadius)
       } else {
@@ -597,62 +583,30 @@ extension MaterialShowcase {
       
     }
     
-    instructionView.frame = CGRect(x: xPosition,
-                                   y: yPosition,
-                                   width: width ,
-                                   height: 0)
+      backgroundContainerView.frame = instructionView.frame.insetBy(dx: -5, dy: -5) // Add padding
+         backgroundContainerView.layoutIfNeeded()
+         
+         instructionView.frame = CGRect(x: xPosition,
+                                        y: yPosition,
+                                        width: width,
+                                        height: 0)
   }
   
   /// Handles user's tap
-  private func tapGestureRecoganizer() -> UIGestureRecognizer {
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(MaterialShowcase.tapGestureSelector))
-    tapGesture.numberOfTapsRequired = 1
-    tapGesture.numberOfTouchesRequired = 1
-    return tapGesture
-  }
+//  private func tapGestureRecoganizer() -> UIGestureRecognizer {
+//    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(MaterialShowcase.tapGestureSelector))
+//    tapGesture.numberOfTapsRequired = 1
+//    tapGesture.numberOfTouchesRequired = 1
+//    return tapGesture
+//  }
   
   @objc private func tapGestureSelector(tapGesture:UITapGestureRecognizer) {
-    completeShowcase(didTapTarget: tapGesture.view === hiddenTargetHolderView)
+    //completeShowcase(didTapTarget: tapGesture.view === hiddenTargetHolderView)
   }
   
   /// Default action when dimissing showcase
   /// Notifies delegate, removes views, and handles out-going animation
-  @objc public func completeShowcase(animated: Bool = true, didTapTarget: Bool = false) {
-    if delegate != nil && delegate?.showCaseDidDismiss != nil {
-      delegate?.showCaseWillDismiss?(showcase: self, didTapTarget: didTapTarget)
-    }
-    if animated {
-      targetRippleView.removeFromSuperview()
-      UIView.animateKeyframes(withDuration: aniGoOutDuration, delay: 0, options: [.calculationModeLinear], animations: {
-        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 3/5, animations: {
-          self.targetHolderView.transform = CGAffineTransform(scaleX: 0.4, y: 0.4)
-          self.backgroundView.transform = CGAffineTransform(scaleX: 1.3, y: 1.3)
-          self.backgroundView.alpha = 0
-        })
-        UIView.addKeyframe(withRelativeStartTime: 3/5, relativeDuration: 2/5, animations: {
-          self.alpha = 0
-        })
-      }, completion: { (success) in
-        // Recycle subviews
-        self.recycleSubviews()
-        // Remove it from current screen
-        self.removeFromSuperview()
-      })
-    } else {
-      // Recycle subviews
-      self.recycleSubviews()
-      // Remove it from current screen
-      self.removeFromSuperview()
-    }
-    if delegate != nil && delegate?.showCaseDidDismiss != nil {
-      delegate?.showCaseDidDismiss?(showcase: self, didTapTarget: didTapTarget)
-    }
     
-    if didTapTarget {
-      onTapThrough?()
-    }
-  }
-  
   private func recycleSubviews() {
     subviews.forEach({$0.removeFromSuperview()})
   }
