@@ -1,3 +1,4 @@
+import UIKit
 public class MaterialShowcaseInstructionView: UIView {
   
   // Constants for default configuration
@@ -7,8 +8,24 @@ public class MaterialShowcaseInstructionView: UIView {
   internal static let SECONDARY_TEXT_COLOR = UIColor.darkGray
   internal static let PRIMARY_DEFAULT_TEXT = "Tips Heading"
   internal static let SECONDARY_DEFAULT_TEXT = "Lorem ipsum dolor sit amet consectetur. Et amet auctor cursus risus consectetur."
-  internal static let BACKGROUND_COLOR = UIColor.white
-  
+    @available(iOS 13.0, *)
+    internal static let BACKGROUND_COLOR =  UIColor.systemGray6
+    public var arrowAlignment: ArrowAlignment = .center {
+        didSet {
+            // Trigger layout refresh so arrow re-draws
+            setNeedsLayout()
+        }
+    }
+    public var arrowDirection: ArrowDirection = .up {
+        didSet {
+            setNeedsLayout()
+        }
+    }
+
+    /// Optional offset to nudge the arrow more left/right
+    public var arrowXOffset: CGFloat = 0
+    private var arrowView: UIView?
+
   public var primaryLabel: UILabel!
   public var secondaryLabel: UILabel!
   private var arrowLayer: CAShapeLayer!
@@ -26,9 +43,10 @@ public class MaterialShowcaseInstructionView: UIView {
   public var secondaryTextAlignment: NSTextAlignment!
     public var nextBtn: UIButton?
     public var skipBtn: UIButton?
+    public var arrowImageView: UIImageView?
     public var nextButtonAction: (() -> Void)?
     public var skipButtonAction: (() -> Void)?
-
+    public var showNextArrow = true
   // Arrow dimensions
   private let arrowHeight: CGFloat = 10
   private let arrowWidth: CGFloat = 20
@@ -39,6 +57,7 @@ public class MaterialShowcaseInstructionView: UIView {
     // Create frame
     let frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width * 0.8, height: 0)
     super.init(frame: frame)
+        
     configure()
       
   }
@@ -50,12 +69,69 @@ public class MaterialShowcaseInstructionView: UIView {
   /// Configures default properties and sets up the view
   private func configure() {
     setDefaultProperties()
-    backgroundColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR
+      if #available(iOS 13.0, *) {
+          backgroundColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR
+      } else {
+          // Fallback on earlier versions
+      }
+    
     layer.cornerRadius = cornerRadius
     layer.masksToBounds = false
-  //  addArrow()
+   // addArrow()
   }
-  
+    private func addArrow() {
+        arrowView?.removeFromSuperview()
+
+        let arrowYOffset: CGFloat = arrowDirection == .up ? -arrowHeight + 1 : bounds.height - 1
+        let arrowContainer = UIView(frame: CGRect(x: 0, y: arrowYOffset, width: arrowWidth, height: arrowHeight))
+        arrowContainer.backgroundColor = .clear
+
+        let arrowPath = UIBezierPath()
+
+        if arrowDirection == .up {
+            // ▲ Pointing up
+            arrowPath.move(to: CGPoint(x: 0, y: arrowHeight)) // left base
+            arrowPath.addLine(to: CGPoint(x: arrowWidth / 2, y: 0)) // tip
+            arrowPath.addLine(to: CGPoint(x: arrowWidth, y: arrowHeight)) // right base
+        } else {
+            // ▼ Pointing down
+            arrowPath.move(to: CGPoint(x: 0, y: 0)) // left base
+            arrowPath.addLine(to: CGPoint(x: arrowWidth / 2, y: arrowHeight)) // tip
+            arrowPath.addLine(to: CGPoint(x: arrowWidth, y: 0)) // right base
+        }
+
+        arrowPath.close()
+
+        let mask = CAShapeLayer()
+        mask.path = arrowPath.cgPath
+        if #available(iOS 13.0, *) {
+            mask.fillColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR.cgColor
+        } else {
+            // Fallback on earlier versions
+        }
+        arrowContainer.layer.mask = mask
+        if #available(iOS 13.0, *) {
+            arrowContainer.backgroundColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR
+        } else {
+            // Fallback on earlier versions
+        }
+
+        var arrowX: CGFloat
+        switch arrowAlignment {
+        case .left:
+            arrowX = padding + arrowXOffset
+        case .center:
+            arrowX = (frame.width - arrowWidth) / 2 + arrowXOffset
+        case .right:
+            arrowX = frame.width - padding - arrowWidth + arrowXOffset
+        }
+
+        arrowContainer.frame.origin.x = arrowX
+        addSubview(arrowContainer)
+        arrowView = arrowContainer
+    }
+
+
   private func setDefaultProperties() {
     // Text defaults
     primaryText = MaterialShowcaseInstructionView.PRIMARY_DEFAULT_TEXT
@@ -116,7 +192,6 @@ public class MaterialShowcaseInstructionView: UIView {
     if secondaryLabel != nil {
       secondaryLabel.removeFromSuperview()
     }
-    
     secondaryLabel = UILabel()
     secondaryLabel.font = secondaryTextFont ?? UIFont.systemFont(ofSize: secondaryTextSize)
     secondaryLabel.textColor = secondaryTextColor
@@ -132,44 +207,62 @@ public class MaterialShowcaseInstructionView: UIView {
   }
   
   /// Adds an arrow pointing to the target
-  private func addArrow() {
-    if arrowLayer != nil {
-      arrowLayer.removeFromSuperlayer()
-    }
-    
-    arrowLayer = CAShapeLayer()
-    let arrowPath = UIBezierPath()
-    let arrowStartX = (frame.width - arrowWidth) / 2
-    let arrowStartY = frame.height
-    
-    arrowPath.move(to: CGPoint(x: arrowStartX, y: arrowStartY))
-    arrowPath.addLine(to: CGPoint(x: arrowStartX + arrowWidth, y: arrowStartY))
-    arrowPath.addLine(to: CGPoint(x: arrowStartX + arrowWidth / 2, y: arrowStartY + arrowHeight))
-    arrowPath.close()
-    
-    arrowLayer.path = arrowPath.cgPath
-    arrowLayer.fillColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR.cgColor
-    layer.addSublayer(arrowLayer)
-  }
+//  private func addArrow() {
+//    if arrowLayer != nil {
+//      arrowLayer.removeFromSuperlayer()
+//    }
+//
+//    arrowLayer = CAShapeLayer()
+//    let arrowPath = UIBezierPath()
+//    let arrowStartX = (frame.width - arrowWidth) / 2
+//    let arrowStartY = frame.height
+//
+//    arrowPath.move(to: CGPoint(x: arrowStartX, y: arrowStartY))
+//    arrowPath.addLine(to: CGPoint(x: arrowStartX + arrowWidth, y: arrowStartY))
+//    arrowPath.addLine(to: CGPoint(x: arrowStartX + arrowWidth / 2, y: arrowStartY + arrowHeight))
+//    arrowPath.close()
+//
+//    arrowLayer.path = arrowPath.cgPath
+//    arrowLayer.fillColor = MaterialShowcaseInstructionView.BACKGROUND_COLOR.cgColor
+//    layer.addSublayer(arrowLayer)
+//  }
     func addNextBtn() {
         if nextBtn == nil {
             let nextBtn = UIButton()
-            nextBtn.setTitle("Next >", for: .normal)
+            nextBtn.setTitle("Next", for: .normal)
             nextBtn.setTitleColor(UIColor.black, for: .normal)
-            nextBtn.titleLabel?.font = .boldSystemFont(ofSize: 15)
-            nextBtn.frame = CGRect(x: padding / 2,
-                                   y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY + 5,
-                                   width: 80,
-                                   height: 30)
+            nextBtn.titleLabel?.font = .boldSystemFont(ofSize: 17)
             nextBtn.tintColor = UIColor.black
             nextBtn.addTarget(self, action: #selector(tapOnNextBtn), for: .touchUpInside)
+
+            nextBtn.frame = CGRect(x: 8,
+                                   y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY - 10,
+                                   width: 60,
+                                   height: 30)
+
             self.nextBtn = nextBtn
             addSubview(nextBtn)
-            print("Next button created and added")
-        } else {
-            print("Next button already exists")
         }
+
+       
+                if let image = UIImage(named: "Icon") {
+                    let imageView = UIImageView(image: image)
+                    imageView.contentMode = .scaleAspectFit
+                    imageView.frame = CGRect(
+                        x: 60,
+                        y: (nextBtn?.frame.origin.y)! + 6 ,
+                        width: 20,
+                        height: 20
+                    )
+                    self.arrowImageView = imageView
+                    addSubview(imageView)
+                }
+            
+        
+
+        print("Next button and image handled")
     }
+
     @objc func tapOnNextBtn() {
         print("Tap detected on next button")
         if let action = nextButtonAction {
@@ -194,10 +287,10 @@ public class MaterialShowcaseInstructionView: UIView {
         else{
             let skipBtn = UIButton()
             skipBtn.setTitle("Skip guide", for: .normal)
-            skipBtn.titleLabel?.font = .boldSystemFont(ofSize: 12)
+            skipBtn.titleLabel?.font = .boldSystemFont(ofSize: 14)
             skipBtn.setTitleColor(UIColor.lightGray, for: .normal) // Ensure title color is visible
-            skipBtn.frame = CGRect(x: 200 , // Align to the right with padding
-                                   y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY + 5 , // Position below the labels
+            skipBtn.frame = CGRect(x: 222 , // Align to the right with padding
+                                   y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY - 10 , // Position below the labels
                                    width: 80, // Adjust width for text
                                    height: 30) // Adjust height for better visibility
             skipBtn.addTarget(self, action: #selector(tapOnSkipBtn), for: .touchUpInside)
@@ -209,20 +302,31 @@ public class MaterialShowcaseInstructionView: UIView {
 
     /// Lays out subviews and dynamically adjusts frame size
     public override func layoutSubviews() {
-    
-            super.layoutSubviews()
-            
-            if primaryLabel == nil { addPrimaryLabel() }
-            if secondaryLabel == nil { addSecondaryLabel() }
-            if nextBtn == nil { addNextBtn() }
-            if skipBtn == nil { addSkipBtn() }
-            
-            // Adjust the frame dynamically without replacing subviews
-            frame = CGRect(
-                x: frame.minX,
-                y: frame.minY,
-                width: frame.width,
-                height: primaryLabel.frame.height + secondaryLabel.frame.height + 2 * padding + 30 + arrowHeight + 20
-            )
-        }
+        super.layoutSubviews()
+
+        if primaryLabel == nil { addPrimaryLabel() }
+        if secondaryLabel == nil { addSecondaryLabel() }
+        if nextBtn == nil { addNextBtn() }
+        if skipBtn == nil { addSkipBtn() }
+
+        // Adjust total height
+        frame = CGRect(
+            x: frame.minX,
+            y: frame.minY,
+            width: frame.width,
+            height: primaryLabel.frame.height + secondaryLabel.frame.height + 2 * padding + 30 + arrowHeight + 5
+        )
+
+        addArrow() // Refresh arrow on layout
+    }
+
+}
+public enum ArrowAlignment {
+    case left
+    case center
+    case right
+}
+public enum ArrowDirection {
+    case up   // arrow pointing upward (default)
+    case down // arrow pointing downward
 }

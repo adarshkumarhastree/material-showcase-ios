@@ -196,7 +196,8 @@ extension MaterialShowcase {
   }
   
   /// Shows it over current screen after completing setup process
-    @objc public func show(animated: Bool = false, hasShadow: Bool = true, hasSkipButton: Bool = false, completion handler: (() -> Void)?) {
+    @objc public func show(animated: Bool = false, hasShadow: Bool = true  ,hasSkipButton: Bool = false, completion handler: (() -> Void)?) {
+      
         initViews()
         alpha = backgroundAlpha
         containerView.addSubview(self)
@@ -333,18 +334,16 @@ extension MaterialShowcase {
     }, completion: nil)
   }
   
-   public func initViews() {
-       
-       func initViews() {
-           if originalInstructionView == nil {
-               originalInstructionView = MaterialShowcaseInstructionView()
-           }
-           instructionView = originalInstructionView
-       }
-           
-       
-        
+    func initViews() {
+        if originalInstructionView == nil {
+            originalInstructionView = MaterialShowcaseInstructionView()
+            originalInstructionView?.backgroundColor = UIColor.red
+        }
+        instructionView = originalInstructionView
+        originalInstructionView?.backgroundColor = UIColor.red
+
         let center = calculateCenter(at: targetView, to: containerView)
+
         addTargetRipple(at: center)
         addTargetHolder(at: center)
         if targetHolderColor != .clear {
@@ -352,11 +351,35 @@ extension MaterialShowcase {
         }
         addBackground()
         addInstructionView(at: center)
+
+        // ✅ Get target's actual screen-relative position
+        let convertedFrame = targetView.convert(targetView.bounds, to: containerView)
+        let targetMidX = convertedFrame.midX
+        let screenWidth = containerView.bounds.width // or UIScreen.main.bounds.width
+        let containerHeight = containerView.bounds.height
+        let targetMidY = convertedFrame.midY
+
+        if targetMidY > containerHeight / 2 {
+            instructionView.arrowDirection = .down
+        } else {
+            instructionView.arrowDirection = .up
+        }
+
+        // ✅ Decide arrow position based on target horizontal location
+        if targetMidX < screenWidth * 0.33 {
+            instructionView.arrowAlignment = .left
+            instructionView.arrowXOffset = -2 // Push further left
+        } else if targetMidX > screenWidth * 0.66 {
+            instructionView.arrowAlignment = .right
+            instructionView.arrowXOffset = 2 // Push further left
+        } else {
+            instructionView.arrowAlignment = .center
+        }
+
         instructionView.layoutIfNeeded()
-        
         subviews.forEach { $0.isUserInteractionEnabled = true }
     }
-  
+
   /// Add background which is a big circle
     private func addBackground() {
         switch self.backgroundViewType {
@@ -429,7 +452,7 @@ extension MaterialShowcase {
   private func addTargetRipple(at center: CGPoint) {
       targetRippleView = UIView(frame: CGRect(x: 0, y: 0, width: targetView.bounds.width ,height: targetHolderRadius ))
     targetRippleView.center = center
-    targetRippleView.backgroundColor = aniRippleColor
+ //   targetRippleView.backgroundColor = aniRippleColor
     targetRippleView.alpha = 0.0 //set it invisible
     targetRippleView.asCircle()
     addSubview(targetRippleView)
@@ -585,11 +608,27 @@ extension MaterialShowcase {
     
       backgroundContainerView.frame = instructionView.frame.insetBy(dx: -5, dy: -5) // Add padding
          backgroundContainerView.layoutIfNeeded()
-         
-         instructionView.frame = CGRect(x: xPosition,
-                                        y: yPosition,
-                                        width: width,
-                                        height: 0)
+      let convertedFrame = targetView.convert(targetView.bounds, to: containerView)
+      let targetMidX = convertedFrame.midX
+      let screenWidth = containerView.frame.width
+      print("targetMidX  \(targetMidX)")
+      // Push instruction view if target is close to left or right edge
+      if targetMidX > 340 {
+          xPosition += 25
+      } else if targetMidX < 40 {
+          xPosition -= 10
+      }
+
+      // Now apply the final frame after nudge
+      instructionView.frame = CGRect(x: xPosition,
+                                     y: yPosition,
+                                     width: width,
+                                     height: 0)
+      if #available(iOS 13.0, *) {
+          instructionView.backgroundColor = UIColor.systemGray6
+      } else {
+          // Fallback on earlier versions
+      }
   }
   
   /// Handles user's tap
@@ -639,11 +678,25 @@ extension MaterialShowcase {
   }
   
   // Calculates the center point based on targetview
-  func calculateCenter(at targetView: UIView, to containerView: UIView) -> CGPoint {
-    let targetRect = targetView.convert(targetView.bounds , to: containerView)
-    return targetRect.center
-    
-  }
+    func calculateCenter(at targetView: UIView, to containerView: UIView) -> CGPoint {
+        let targetRect = targetView.convert(targetView.bounds, to: containerView)
+        var center = targetRect.center
+
+        // Get container height to decide positioning
+        let containerHeight = containerView.bounds.height
+
+        // If target is in bottom half of the screen, shift instruction upward
+        if center.y > containerHeight / 2 {
+           // Show instruction above the target
+            center.y += 30
+            
+        } else {
+            center.y -= 30 // Show instruction below the target
+        }
+
+        return center
+    }
+
   
   // Gets all UIView from TabBarItem.
   func orderedTabBarItemViews(of tabBar: UITabBar) -> [UIView] {
