@@ -48,8 +48,8 @@ public class MaterialShowcaseInstructionView: UIView {
     public var skipButtonAction: (() -> Void)?
     public var showNextArrow = true
   // Arrow dimensions
-  private let arrowHeight: CGFloat = 10
-  private let arrowWidth: CGFloat = 20
+  private let arrowHeight: CGFloat = 17
+  private let arrowWidth: CGFloat = 22
   private let cornerRadius: CGFloat = 12
   private let padding: CGFloat = 16
     public weak var controller: MaterialShowcaseController?
@@ -289,7 +289,7 @@ public class MaterialShowcaseInstructionView: UIView {
             skipBtn.setTitle("Skip guide", for: .normal)
             skipBtn.titleLabel?.font = .boldSystemFont(ofSize: 14)
             skipBtn.setTitleColor(UIColor.lightGray, for: .normal) // Ensure title color is visible
-            skipBtn.frame = CGRect(x: 222 , // Align to the right with padding
+            skipBtn.frame = CGRect(x: containerView.frame.width - 60 , // Align to the right with padding
                                    y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY - 10 , // Position below the labels
                                    width: 80, // Adjust width for text
                                    height: 30) // Adjust height for better visibility
