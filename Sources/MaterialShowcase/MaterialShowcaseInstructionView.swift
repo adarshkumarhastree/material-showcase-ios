@@ -288,7 +288,7 @@ public class MaterialShowcaseInstructionView: UIView {
             let skipBtn = UIButton()
             skipBtn.setTitle("Skip guide", for: .normal)
             skipBtn.titleLabel?.font = .boldSystemFont(ofSize: 14)
-            skipBtn.setTitleColor(UIColor.lightGray, for: .normal) // Ensure title color is visible
+            skipBtn.setTitleColor(UIColor.gray, for: .normal) // Ensure title color is visible
             skipBtn.frame = CGRect(x: containerView.frame.width - 60 , // Align to the right with padding
                                    y: primaryLabel.frame.maxY + secondaryLabel.frame.maxY - 10 , // Position below the labels
                                    width: 80, // Adjust width for text
