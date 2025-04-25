@@ -591,7 +591,11 @@ extension MaterialShowcase {
                                      y: instructionView.frame.origin.y,
                                      width: width ,
                                      height: 0)
-        instructionView.backgroundColor = UIColor.fromHex(hexString: "#F6F7FE")
+        if #available(iOS 13.0, *) {
+            instructionView.backgroundColor = UIColor.systemGray5
+        } else {
+            // Fallback on earlier versions
+        }
       instructionView.layoutIfNeeded()
         instructionView.nextButtonAction = { [weak self] in
              guard let self = self else { return }
