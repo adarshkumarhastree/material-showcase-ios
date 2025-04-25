@@ -592,7 +592,7 @@ extension MaterialShowcase {
                                      width: width ,
                                      height: 0)
         if #available(iOS 13.0, *) {
-            instructionView.backgroundColor = UIColor.systemGray5
+            instructionView.backgroundColor = UIColor.systemGray6
         } else {
             // Fallback on earlier versions
         }
